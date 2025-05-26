@@ -23,22 +23,20 @@ import { addDislikeInfo } from '@renderer/core/dislikeList'
 import { httpFetch } from '@renderer/utils/request'
 
 const sendRequestToLocalServer = (endpoint: string, data: Record<string, any> = {}, timeout = 3000) => {
-  // 后台异步调用，不阻塞主线程
   void (async () => {
-    const req = httpFetch(`http://127.0.0.1:28080/${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-      timeout,
-    });
-
     try {
-      await req.promise;
+      await httpFetch(`http://127.0.0.1:28080/${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        timeout,
+      });
       console.log(`✅ 已发送 ${endpoint} 请求至本地服务器`);
     } catch (err) {
-      console.error(`❌ ${endpoint} 请求失败:`, err.message || err);
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`❌ ${endpoint} 请求失败:`, message);
     }
   })();
 };
@@ -270,6 +268,7 @@ export const playListById = (listId: string, id: string) => {
   setPlayMusicInfo(listId, musicInfo)
   if (appSetting['player.isAutoCleanPlayedList'] || prevListId != listId) clearPlayedList()
   clearTempPlayeList()
+  handlePlay()
 }
 
 /**
@@ -284,6 +283,7 @@ export const playList = (listId: string, index: number) => {
   setPlayMusicInfo(listId, getList(listId)[index])
   if (appSetting['player.isAutoCleanPlayedList'] || prevListId != listId) clearPlayedList()
   clearTempPlayeList()
+  handlePlay()
 }
 
 const handleToggleStop = () => {
