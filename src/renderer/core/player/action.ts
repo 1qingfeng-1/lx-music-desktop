@@ -22,19 +22,19 @@ import { loveList } from '@renderer/store/list/state'
 import { addDislikeInfo } from '@renderer/core/dislikeList'
 import { httpFetch } from '@renderer/utils/request'
 
-const sendRequestToLocalServer = async (endpoint, data = {}) => {
-  try {
-    await httpFetch(`http://127.0.0.1:28080/${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    console.log(`✅ 已发送 ${endpoint} 请求至本地服务器`);
-  } catch (err) {
-    console.error(`❌ ${endpoint} 请求失败:`, err);
-  }
+const sendRequestToLocalServer = (endpoint, data = {}) => {
+  (async () => {
+    try {
+      await httpFetch(`http://127.0.0.1:28080/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      console.log(`✅ 已发送 ${endpoint} 请求至本地服务器`);
+    } catch (err) {
+      console.error(`❌ ${endpoint} 请求失败:`, err);
+    }
+  })();
 };
 
 
@@ -149,7 +149,7 @@ export const setMusicUrl = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
   void getMusicPlayUrl(musicInfo, isRefresh).then((url) => {
     if (!url) return
     setResource(url)
-    await sendRequestToLocalServer('play', { 'url': url })
+    sendRequestToLocalServer('play', { 'url': url })
   }).catch((err: any) => {
     console.log(err)
     setAllStatus(err.message)
@@ -605,7 +605,7 @@ export const play = () => {
     return
   }
   setPlay()
-   await sendRequestToLocalServer('resume')
+  sendRequestToLocalServer('resume')
 }
 
 /**
@@ -613,7 +613,7 @@ export const play = () => {
  */
 export const pause = () => {
   setPause()
-  await sendRequestToLocalServer('pause')
+  sendRequestToLocalServer('pause')
 }
 
 /**
@@ -624,7 +624,7 @@ export const stop = () => {
   setTimeout(() => {
     window.app_event.stop()
   })
-  await sendRequestToLocalServer('stop')
+  sendRequestToLocalServer('stop')
 }
 
 /**
