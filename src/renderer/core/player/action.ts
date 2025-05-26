@@ -263,7 +263,6 @@ export const playListById = (listId: string, id: string) => {
   setPlayMusicInfo(listId, musicInfo)
   if (appSetting['player.isAutoCleanPlayedList'] || prevListId != listId) clearPlayedList()
   clearTempPlayeList()
-  handle
 }
 
 /**
