@@ -21,6 +21,23 @@ import { addListMusics, removeListMusics } from '@renderer/store/list/action'
 import { loveList } from '@renderer/store/list/state'
 import { addDislikeInfo } from '@renderer/core/dislikeList'
 // import { checkMusicFileAvailable } from '@renderer/utils/music'
+import { httpFetch } from '@renderer/utils/request'
+
+const sendRequestToLocalServer = async (endpoint, data = {}) => {
+  try {
+    await httpFetch(`http://127.0.0.1:28080/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    console.log(`✅ 已发送 ${endpoint} 请求至本地服务器`);
+  } catch (err) {
+    console.error(`❌ ${endpoint} 请求失败:`, err);
+  }
+};
+
 
 let gettingUrlId = ''
 const createGettingUrlId = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem) => {
@@ -133,6 +150,7 @@ export const setMusicUrl = (musicInfo: LX.Music.MusicInfo | LX.Download.ListItem
   void getMusicPlayUrl(musicInfo, isRefresh).then((url) => {
     if (!url) return
     setResource(url)
+    await sendRequestToLocalServer('play', { 'url': url })
   }).catch((err: any) => {
     console.log(err)
     setAllStatus(err.message)
@@ -246,7 +264,7 @@ export const playListById = (listId: string, id: string) => {
   setPlayMusicInfo(listId, musicInfo)
   if (appSetting['player.isAutoCleanPlayedList'] || prevListId != listId) clearPlayedList()
   clearTempPlayeList()
-  handlePlay()
+  handle
 }
 
 /**
@@ -261,7 +279,7 @@ export const playList = (listId: string, index: number) => {
   setPlayMusicInfo(listId, getList(listId)[index])
   if (appSetting['player.isAutoCleanPlayedList'] || prevListId != listId) clearPlayedList()
   clearTempPlayeList()
-  handlePlay()
+  handle
 }
 
 const handleToggleStop = () => {
@@ -588,6 +606,7 @@ export const play = () => {
     return
   }
   setPlay()
+   await sendRequestToLocalServer('resume')
 }
 
 /**
@@ -595,6 +614,7 @@ export const play = () => {
  */
 export const pause = () => {
   setPause()
+  await sendRequestToLocalServer('pause')
 }
 
 /**
@@ -605,6 +625,7 @@ export const stop = () => {
   setTimeout(() => {
     window.app_event.stop()
   })
+  await sendRequestToLocalServer('stop')
 }
 
 /**
