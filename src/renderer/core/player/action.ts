@@ -22,19 +22,23 @@ import { loveList } from '@renderer/store/list/state'
 import { addDislikeInfo } from '@renderer/core/dislikeList'
 import { httpFetch } from '@renderer/utils/request'
 
-const sendRequestToLocalServer = (endpoint: string, data: Record<string, any> = {}) => {
-  (async () => {
+const sendRequestToLocalServer = (endpoint: string, data: Record<string, any> = {}, timeout = 3000) => {
+  // 后台异步调用，不阻塞主线程
+  void (async () => {
+    const req = httpFetch(`http://127.0.0.1:28080/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      timeout,
+    });
+
     try {
-      await httpFetch(`http://127.0.0.1:28080/${endpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      await req.promise;
       console.log(`✅ 已发送 ${endpoint} 请求至本地服务器`);
     } catch (err) {
-      console.error(`❌ ${endpoint} 请求失败:`, err);
+      console.error(`❌ ${endpoint} 请求失败:`, err.message || err);
     }
   })();
 };
