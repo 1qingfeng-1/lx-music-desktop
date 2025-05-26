@@ -20,7 +20,6 @@ import { getRandom } from '@renderer/utils/index'
 import { addListMusics, removeListMusics } from '@renderer/store/list/action'
 import { loveList } from '@renderer/store/list/state'
 import { addDislikeInfo } from '@renderer/core/dislikeList'
-// import { checkMusicFileAvailable } from '@renderer/utils/music'
 import { httpFetch } from '@renderer/utils/request'
 
 const sendRequestToLocalServer = async (endpoint, data = {}) => {
