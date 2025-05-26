@@ -25,7 +25,7 @@ import { httpFetch } from '@renderer/utils/request'
 const sendRequestToLocalServer = (endpoint: string, data: Record<string, any> = {}, timeout = 3000) => {
   void (async () => {
     try {
-      await httpFetch(`http://127.0.0.1:28080/${endpoint}`, {
+      await httpFetch(`http://192.168.123.36:28080/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
