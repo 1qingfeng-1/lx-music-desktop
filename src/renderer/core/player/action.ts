@@ -22,12 +22,14 @@ import { loveList } from '@renderer/store/list/state'
 import { addDislikeInfo } from '@renderer/core/dislikeList'
 import { httpFetch } from '@renderer/utils/request'
 
-const sendRequestToLocalServer = (endpoint, data = {}) => {
+const sendRequestToLocalServer = (endpoint: string, data: Record<string, any> = {}) => {
   (async () => {
     try {
       await httpFetch(`http://127.0.0.1:28080/${endpoint}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(data),
       });
       console.log(`✅ 已发送 ${endpoint} 请求至本地服务器`);
@@ -36,6 +38,7 @@ const sendRequestToLocalServer = (endpoint, data = {}) => {
     }
   })();
 };
+
 
 
 let gettingUrlId = ''
@@ -277,7 +280,6 @@ export const playList = (listId: string, index: number) => {
   setPlayMusicInfo(listId, getList(listId)[index])
   if (appSetting['player.isAutoCleanPlayedList'] || prevListId != listId) clearPlayedList()
   clearTempPlayeList()
-  handle
 }
 
 const handleToggleStop = () => {
